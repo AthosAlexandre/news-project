@@ -3,6 +3,7 @@ import { FormEvent, useState } from "react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Header from "@/components/Header";
 
 export default function NewNewsPage() {
   const router = useRouter();
@@ -24,8 +25,10 @@ export default function NewNewsPage() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto p-4 space-y-4">
-      <Link href="/" className="underline">&larr; Voltar</Link>
+    <main className="page flex flex-col items-center mx-auto p-4">
+
+      <Header actionLabel="Voltar" actionHref="/"/>
+
       <h1 className="text-2xl font-bold">Nova notícia</h1>
 
       <form onSubmit={onSubmit} className="space-y-3">
