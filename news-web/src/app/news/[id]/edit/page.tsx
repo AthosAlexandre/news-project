@@ -1,51 +1,229 @@
 "use client";
+
 import { useEffect, useState, FormEvent } from "react";
 import { api } from "@/lib/api";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { News } from "@/types/news";
+import { absUrl } from "@/lib/img";
 
 export default function EditNewsPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [data, setData] = useState<News | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
+  const [body, setBody] = useState("");
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
   useEffect(() => {
     (async () => {
-      const res = await api.get<News>(`/news/${params.id}`);
-      setData(res.data);
+      try {
+        const res = await api.get<News>(`/news/${params.id}`);
+        const n = res.data;
+        setTitle(n.title);
+        setSummary(n.summary);
+        setBody(n.body);
+        setCurrentImageUrl(n.imageUrl ?? null);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, [params.id]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!data) return;
+    setSubmitting(true);
+    try {
+      const form = new FormData();
+      form.append("title", title);
+      form.append("summary", summary);
+      form.append("body", body);
+      if (image) form.append("image", image);
 
-    const form = new FormData();
-    if (data.title) form.append("title", data.title);
-    if (data.summary) form.append("summary", data.summary);
-    if (data.body) form.append("body", data.body);
-    if (image) form.append("image", image);
-
-    await api.put(`/news/${params.id}`, form, { headers: { "Content-Type": "multipart/form-data" }});
-    router.push(`/news/${params.id}`);
+      await api.put(`/news/${params.id}`, form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      router.push(`/news/${params.id}`);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  if (!data) return <main className="max-w-3xl mx-auto p-4">Carregando…</main>;
+  if (loading) {
+    return (
+      <main className="page flex flex-col items-center mx-auto p-4">
+        <Header actionLabel="Voltar" actionHref={`/news/${params.id}`} />
+        <section className="w-full mt-8">
+          <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white shadow-sm p-8">
+            Carregando…
+          </div>
+        </section>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
-    <main className="max-w-3xl mx-auto p-4 space-y-4">
-      <Link href={`/news/${params.id}`} className="underline">&larr; Voltar</Link>
-      <h1 className="text-2xl font-bold">Editar notícia</h1>
+    <main className="page flex flex-col items-center mx-auto p-4">
+      <Header actionLabel="Voltar" actionHref={`/news/${params.id}`} />
 
-      <form onSubmit={onSubmit} className="space-y-3">
-        <input className="border p-2 w-full" value={data.title} onChange={e=>setData({...data, title: e.target.value})} />
-        <input className="border p-2 w-full" value={data.summary} onChange={e=>setData({...data, summary: e.target.value})} />
-        <textarea className="border p-2 w-full min-h-[180px]" value={data.body} onChange={e=>setData({...data, body: e.target.value})} />
-        <input type="file" onChange={e=>setImage(e.target.files?.[0] || null)} />
-        <button className="border px-4 py-2 rounded">Salvar</button>
-      </form>
+      <section className="w-full mt-8">
+        <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          {/* Título */}
+          <div className="px-6 py-6 md:px-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Editar <span className="text-[#199BD7]">Notícia</span>
+            </h2>
+          </div>
+
+          <div className="border-t border-gray-200" />
+
+          <form onSubmit={onSubmit} className="px-6 py-6 md:px-8 space-y-6">
+            {/* TÍTULO */}
+            <div className="relative">
+              <input
+                id="title"
+                className="peer w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent
+                           outline-none transition focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
+                placeholder=" "
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              <label
+                htmlFor="title"
+                className="pointer-events-none absolute left-3 bg-white px-1 text-gray-500 transition-all
+                           top-1/2 -translate-y-1/2 text-base
+                           peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                           peer-focus:-top-2 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-[#199BD7]
+                           peer-not-placeholder-shown:-top-2 peer-not-placeholder-shown:translate-y-0 peer-not-placeholder-shown:text-xs"
+              >
+                Título
+              </label>
+            </div>
+
+            <div className="relative">
+              <input
+                id="summary"
+                className="peer w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent
+                           outline-none transition focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
+                placeholder=" "
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                required
+              />
+              <label
+                htmlFor="summary"
+                className="pointer-events-none absolute left-3 bg-white px-1 text-gray-500 transition-all
+                           top-1/2 -translate-y-1/2 text-base
+                           peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                           peer-focus:-top-2 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-[#199BD7]
+                           peer-not-placeholder-shown:-top-2 peer-not-placeholder-shown:translate-y-0 peer-not-placeholder-shown:text-xs"
+              >
+                Resumo
+              </label>
+            </div>
+
+            <div className="relative">
+              <textarea
+                id="body"
+                className="peer w-full min-h-[180px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent
+                           outline-none transition focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
+                placeholder="Corpo"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                required
+              />
+              <label
+                htmlFor="body"
+                className="pointer-events-none absolute left-3 top-3 bg-white px-1 text-gray-500 transition-all
+                           peer-focus:-top-2 peer-focus:text-xs peer-focus:text-[#199BD7]
+                           peer-not-placeholder-shown:-top-2 peer-not-placeholder-shown:text-xs"
+              >
+                Corpo
+              </label>
+            </div>
+
+            {/* IMAGEM ATUAL (se existir) */}
+            {currentImageUrl && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">Imagem atual:</p>
+                <img
+                  src={absUrl(currentImageUrl)}
+                  alt="Imagem atual"
+                  className="max-h-48 w-full rounded object-cover border"
+                />
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4">
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => setImage(e.target.files?.[0] || null)}
+              />
+              <label
+                htmlFor="image"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#199BD7] px-4 py-2.5 text-sm font-medium text-white
+                           transition-colors hover:bg-[#157FB0] focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-[#199BD7]/40 focus-visible:ring-offset-2"
+              >
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="h-5 w-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.172 7l-6.586 6.586a2 2 0 002.828 2.828l6.364-6.364a4 4 0 00-5.656-5.656L5.05 10.95a6 6 0 108.485 8.485l7.071-7.071"
+                  />
+                </svg>
+                Selecionar nova imagem
+              </label>
+              <span className="text-sm text-gray-600">
+                {image ? image.name : "Nenhum arquivo selecionado"}
+              </span>
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="inline-flex items-center justify-center rounded-md bg-[#199BD7] px-5 py-2.5 text-sm font-medium text-white
+                           transition-colors hover:bg-[#157FB0] focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-[#199BD7]/40 focus-visible:ring-offset-2 disabled:opacity-60"
+              >
+                {submitting ? "Salvando..." : "Salvar alterações"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => router.push(`/news/${params.id}`)}
+                className="inline-flex items-center justify-center rounded-md bg-gray-200 px-5 py-2.5 text-sm font-medium text-gray-800
+                           transition-colors hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-gray-400/40 focus-visible:ring-offset-2"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }
