@@ -90,7 +90,7 @@ export default function NewNewsPage() {
                transition-colors hover:bg-[#157FB0] focus-visible:outline-none focus-visible:ring-2
                focus-visible:ring-[#199BD7]/40 focus-visible:ring-offset-2"
               >
-                {/* Ícone de clipe */}
+
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -117,7 +117,7 @@ export default function NewNewsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center rounded-md bg-[#199BD7] px-5 py-2.5 text-sm font-medium text-white
+                className="cursor-pointer inline-flex items-center justify-center rounded-md bg-[#199BD7] px-5 py-2.5 text-sm font-medium text-white
                            transition-colors hover:bg-[#157FB0] focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-[#199BD7]/40 focus-visible:ring-offset-2 disabled:opacity-60"
               >

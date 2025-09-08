@@ -76,7 +76,7 @@ export default function EditNewsPage() {
 
       <section className="w-full mt-8">
         <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-          {/* Título */}
+        
           <div className="px-6 py-6 md:px-8">
             <h2 className="text-2xl font-bold text-gray-900">
               Editar <span className="text-[#199BD7]">Notícia</span>
@@ -162,7 +162,7 @@ export default function EditNewsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center rounded-md bg-[#199BD7] px-5 py-2.5 text-sm font-medium text-white
+                className="cursor-pointer inline-flex items-center justify-center rounded-md bg-[#199BD7] px-5 py-2.5 text-sm font-medium text-white
                            transition-colors hover:bg-[#157FB0] focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-[#199BD7]/40 focus-visible:ring-offset-2 disabled:opacity-60"
               >
@@ -172,7 +172,7 @@ export default function EditNewsPage() {
               <button
                 type="button"
                 onClick={() => router.push(`/news/${params.id}`)}
-                className="inline-flex items-center justify-center rounded-md bg-gray-200 px-5 py-2.5 text-sm font-medium text-gray-800
+                className="cursor-pointer inline-flex items-center justify-center rounded-md bg-gray-200 px-5 py-2.5 text-sm font-medium text-gray-800
                            transition-colors hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-gray-400/40 focus-visible:ring-offset-2"
               >
