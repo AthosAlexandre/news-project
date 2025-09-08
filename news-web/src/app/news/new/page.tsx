@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FormField from "@/components/FormField";
 
 export default function NewNewsPage() {
   const router = useRouter();
@@ -48,75 +49,32 @@ export default function NewNewsPage() {
 
           <div className="border-t border-gray-200" />
 
-          {/* Form */}
           <form onSubmit={onSubmit} className="px-6 py-6 md:px-8 space-y-6">
+            <FormField
+              id="title"
+              label="Título"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
 
-            <div className="relative">
-              <input
-                id="title"
-                className="peer w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent
-               outline-none transition focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
-                placeholder=" "
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              <label
-                htmlFor="title"
-                className="pointer-events-none absolute left-3 bg-white px-1 text-gray-500 transition-all
-               top-1/2 -translate-y-1/2 text-base
-               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
-               peer-focus:top-[-8px] peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-[#199BD7]
-               peer-not-placeholder-shown:top-[6px] peer-not-placeholder-shown:translate-y-0 peer-not-placeholder-shown:text-xs"
-              >
-                Título
-              </label>
-            </div>
+            <FormField
+              id="summary"
+              label="Resumo"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              required
+            />
 
-
-            <div className="relative">
-              <input
-                id="summary"
-                className="peer w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent
-               outline-none transition focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
-                placeholder=" "                                  // <= um espaço
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                required
-              />
-              <label
-                htmlFor="summary"
-                className="pointer-events-none absolute left-3 bg-white px-1 text-gray-500 transition-all
-               top-1/2 -translate-y-1/2 text-base
-               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
-               peer-focus:top-[-8px] peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-[#199BD7]
-               peer-not-placeholder-shown:top-[6px] peer-not-placeholder-shown:translate-y-0 peer-not-placeholder-shown:text-xs"
-              >
-                Resumo
-              </label>
-            </div>
-
-
-            <div className="relative">
-              <textarea
-                id="body"
-                className="peer w-full min-h-[180px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-transparent 
-                           outline-none transition
-                           focus:border-[#199BD7] focus:ring-4 focus:ring-[#199BD7]/20"
-                placeholder="Corpo"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                required
-              />
-              <label
-                htmlFor="body"
-                className="pointer-events-none absolute left-3 top-3 bg-white px-1 text-gray-500 transition-all
-                           peer-focus:-top-2 peer-focus:text-xs peer-focus:text-[#199BD7]
-                           peer-not-placeholder-shown:-top-2 peer-not-placeholder-shown:text-xs"
-              >
-                Corpo
-              </label>
-            </div>
+            <FormField
+              as="textarea"
+              id="body"
+              label="Corpo"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              required
+              rows={8}
+            />
 
             <div className="flex flex-wrap items-center gap-4">
               <input
